@@ -261,7 +261,7 @@ class Puppet::Type
 #            newparam(param, value)
 #        end
 
-        if param.isnamevar?
+        if param.isnamevar? or options[:namevar]
             @namevar = param.name
         end
 

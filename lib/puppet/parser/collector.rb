@@ -23,12 +23,13 @@ class Puppet::Parser::Collector
         host = Puppet::Rails::Host.find_by_name(@scope.host)
 
         args = {:include => {:param_values => :param_name}}
-        args[:conditions] = "(exported = 't' AND restype = '%s')" % [@type]
+        args[:conditions] = ["(exported=? AND restype=?)", true, @type]
         if @equery
-            args[:conditions] += " AND (%s)" % [@equery]
+            args[:conditions][0] += " AND (%s)" % @equery
         end
         if host
-            args[:conditions] = "host_id != %s AND %s" % [host.id, args[:conditions]]
+            args[:conditions][0] += " AND host_id != ?"
+            args[:conditions] << host.id
         else
             #Puppet.info "Host %s is uninitialized" % @scope.host
         end

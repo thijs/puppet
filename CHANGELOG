@@ -1,3 +1,10 @@
+    Applied a few small fixes from the current 0.23.2
+    Debian package:
+
+        * Better Rails query creation
+        * Correct resource deletion from Rails
+        * Empty configuration values are supported
+
     Parsing errors are correctly logged and correctly fails
     when there are syntax failures in unrecoverable
     circumstances, including --parseonly.
