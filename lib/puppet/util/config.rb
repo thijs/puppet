@@ -35,6 +35,7 @@ class Puppet::Util::Config
 
     # Set a config value.  This doesn't set the defaults, it sets the value itself.
     def []=(param, value)
+        @returned.clear # clear the entire cache.
         @@sync.synchronize do # yay, thread-safe
             param = symbolize(param)
             unless @config.include?(param)
@@ -45,9 +46,6 @@ class Puppet::Util::Config
                 @order << param
             end
             @config[param].value = value
-            if @returned.include?(param)
-                @returned.delete(param)
-            end
         end
 
         return value
