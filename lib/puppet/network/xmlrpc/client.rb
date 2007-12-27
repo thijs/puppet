@@ -93,6 +93,13 @@ module Puppet::Network
             @http.cert = client.cert
             @http.verify_mode = OpenSSL::SSL::VERIFY_PEER
             @http.key = client.key
+
+            # Then set it appropriately.
+            if Puppet[:http_enable_post_connection_check]
+                @http.enable_post_connection_check = true
+            else
+                @http.enable_post_connection_check = false
+            end
         end
 
         def initialize(hash = {})

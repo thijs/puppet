@@ -1,3 +1,9 @@
+    Pulling the code related to the fixes for #896
+    from the 0.24.x branch.  This provides support
+    and workarounds for the security fix in Ruby that
+    requires the server certificate naem to match the
+    name the client is connecting to.
+
     Applied a few small fixes from the current 0.23.2
     Debian package:
 
