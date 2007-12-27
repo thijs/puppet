@@ -1,3 +1,8 @@
+    Parsing errors are correctly logged and correctly fails
+    when there are syntax failures in unrecoverable
+    circumstances, including --parseonly.
+
+0.23.2
     Fixed the problem in cron jobs where environment settings
     tended to multiple. (#749)
 

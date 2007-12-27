@@ -656,10 +656,12 @@ class Puppet::Parser::Interpreter
             # Mark when we parsed, so we can check freshness
             @parsedate = Time.now.to_i
         rescue => detail
-            if Puppet[:trace]
-                puts detail.backtrace
+            puts detail.backtrace if Puppet[:trace]
+            if defined?(@parser) and @parser
+                Puppet.err "Could not parse; using old configuration: %s" % detail
+            else
+                raise detail
             end
-            Puppet.err "Could not parse; using old configuration: %s" % detail
         end
     end
 
