@@ -180,8 +180,17 @@ class DirectoryService < Puppet::Provider::NameService
         #     This method spits out proper DSCL commands for us.
         #     We EXPECT name to be @resource[:name] when called from an instance object.
 
+        # NBK: when querying DS, we want to check the entire search path,
+        # but when creating objects, we default to the local domain.
+        case ds_action
+        when /-delete/, /-create/, /-change/
+          ds_node = "."
+        else
+          ds_node = "/Search"
+        end
+        
         # There are two ways to specify paths in 10.5.  See man dscl.
-        command_vector = [ command(:dscl), "-url", "/Search" ]
+        command_vector = [ command(:dscl), "-url", ds_node ]
         # JJM: The actual action to perform.  See "man dscl"
         #      Common actiosn: -create, -delete, -merge, -append, -passwd
         command_vector << ds_action
