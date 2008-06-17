@@ -10,25 +10,10 @@ module Puppet
             raise(Puppet::Error, "Invalid group name '%s'" % group.inspect) unless group and group != ""
         end
 
-        def id2name(id)
-            return id.to_s if id.is_a?(Symbol)
-            return nil if id > Puppet[:maximum_uid].to_i
-            begin
-                group = Etc.getgrgid(id)
-            rescue ArgumentError
-                return nil
-            end
-            if group.gid == ""
-                return nil
-            else
-                return group.name
-            end
-        end
-
         # We want to print names, not numbers
         def is_to_s(currentvalue)
             if currentvalue.is_a? Integer
-                id2name(currentvalue) || currentvalue
+                Puppet::Util.groupname(currentvalue) || currentvalue
             else
                 return currentvalue.to_s
             end
@@ -36,7 +21,7 @@ module Puppet
 
         def should_to_s(newvalue = @should)
             if newvalue.is_a? Integer
-                id2name(newvalue) || newvalue
+                Puppet::Util.groupname(newvalue) || newvalue
             else
                 return newvalue.to_s
             end
@@ -87,11 +72,18 @@ module Puppet
             if value =~ /^\d+$/
                 value = value.to_i
             end
-        
-            if gid = Puppet::Util.gid(value)
-                return gid
-            else
+            if value.is_a?(Integer)
+              if tmp = Puppet::Util.groupname(value)
+                return value
+              else
                 return false
+              end
+            else
+              if gid = Puppet::Util.gid(value)
+                  return gid
+              else
+                  return false
+              end
             end
         end
 

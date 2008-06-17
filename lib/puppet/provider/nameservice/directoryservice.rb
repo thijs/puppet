@@ -181,7 +181,7 @@ class DirectoryService < Puppet::Provider::NameService
         #     We EXPECT name to be @resource[:name] when called from an instance object.
 
         # There are two ways to specify paths in 10.5.  See man dscl.
-        command_vector = [ command(:dscl), "-url", "." ]
+        command_vector = [ command(:dscl), "-url", "/Search" ]
         # JJM: The actual action to perform.  See "man dscl"
         #      Common actiosn: -create, -delete, -merge, -append, -passwd
         command_vector << ds_action
