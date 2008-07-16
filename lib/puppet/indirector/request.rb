@@ -3,7 +3,7 @@ require 'puppet/indirector'
 # Provide any attributes or functionality needed for indirected
 # instances.
 class Puppet::Indirector::Request
-    attr_accessor :indirection_name, :key, :method, :options, :instance, :node, :ip, :authenticated
+    attr_accessor :indirection_name, :key, :method, :options, :instance, :node, :ip, :authenticated, :use_cache
 
     # Is this an authenticated request?
     def authenticated?
@@ -37,6 +37,15 @@ class Puppet::Indirector::Request
 
     # Look up the indirection based on the name provided.
     def indirection
-        Puppet::Indirector::Indirection.instance(@indirection_name)
+        Puppet::Indirector::Indirection.instance(indirection_name)
+    end
+
+    # Should we allow use of the cached object?
+    def use_cache?
+        if defined?(@use_cache)
+            ! ! use_cache
+        else
+            true
+        end
     end
 end
