@@ -1,4 +1,6 @@
 0.24.x
+    Fixed #1521 -- ldap user and password are now used with the default connection.
+
     Fixed issues with file descriptors leaking into subprocesses
 
     Fixed #1568 - createpackage.sh
