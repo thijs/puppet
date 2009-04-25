@@ -31,3 +31,6 @@ Puppet.features.add(:rrd, :libs => ["RRDtool"])
 
 # We have rack available, an HTTP Application Stack
 Puppet.features.add(:rack, :libs => ["rack"])
+
+# We have JSON available
+Puppet.features.add(:json, :libs => ["json"])
