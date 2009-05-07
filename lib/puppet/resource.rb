@@ -9,6 +9,69 @@ class Puppet::Resource
     include Enumerable
     attr_accessor :type, :title, :file, :line, :catalog, :exported
 
+    def self.from_json(json)
+        raise ArgumentError, "No resource type provided in json data" unless type = json['type']
+        raise ArgumentError, "No resource title provided in json data" unless title = json['title']
+
+        resource = new(type, title)
+
+        if params = json['parameters']
+            params.each { |param, value| resource[param] = value }
+        end
+
+        if tags = json['tags']
+            tags.each { |tag| resource.tag(tag) }
+        end
+
+        if file = json['file']
+            resource.file = file
+        end
+
+        if line = json['line']
+            resource.line = line
+        end
+
+        resource
+    end
+
+    def to_json(*args)
+        raise "Cannot convert to JSON unless the 'json' library is installed" unless Puppet.features.json?
+
+        data = [:file, :line, :type, :title, :tags].inject({}) do |hash, param|
+            next hash unless value = self.send(param)
+            hash[param.to_s] = value
+            hash
+        end
+
+        params = self.to_hash.inject({}) do |hash, ary|
+            param, value = ary
+
+            # Don't duplicate the title as the namevar
+            next hash if param == namevar and value == title
+            value = [value] unless value.is_a?(Array)
+            hash[param] = value
+            hash
+        end
+
+        unless params.empty?
+            data["parameters"] = params
+        end
+
+        res = {
+            'json_class' => self.class.name,
+            'data' => data
+        }
+        data.each do |key, value|
+            puts "Converting %s (%s)" % [key, value.inspect]
+            p value
+            value.to_json(*args)
+            key.to_json(*args)
+        end
+        puts "Converted all"
+        p res
+        res.to_json(*args)
+    end
+
     # Proxy these methods to the parameters hash.  It's likely they'll
     # be overridden at some point, but this works for now.
     %w{has_key? keys length delete empty? <<}.each do |method|
@@ -81,9 +144,6 @@ class Puppet::Resource
         result = @parameters.dup
         unless result.include?(namevar)
             result[namevar] = title
-        end
-        if result.has_key?(nil)
-            raise "wtf? %s" % namevar.inspect
         end
         result
     end
